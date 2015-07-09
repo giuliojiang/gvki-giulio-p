@@ -48,7 +48,8 @@ def addInterceptionsEnv(optionsInterceptionsPerKernel):
 # ===============================================
 # add environment variable for GVKI_WORKING_DIR
 def addWorkingDirEnv(workingDir):
-    os.environ[ENV_GVKI_WORKING_DIR] = workingDir
+    if (workingDir != ''):
+        os.environ[ENV_GVKI_WORKING_DIR] = workingDir
 
 # ===================================
 # MAIN METHOD
@@ -68,8 +69,7 @@ def main(argv=None):
     parser.add_argument('--preprocess', help='Specifies to preprocess the intercepted kernels', action='store_true', default=False)
     parser.add_argument('--preprocessor', help='Specifies the preprocessor command to use', default='cpp')
     parser.add_argument('--preload-library', help='Specifies to use preload library.', default='')
-    defaultWorkingDir = os.getcwd()
-    parser.add_argument('--working-dir', help='Specifies where the gvki-n folders will be created', default=defaultWorkingDir)
+    parser.add_argument('--working-dir', help='Specifies where the gvki-n folders will be created', default='')
     parser.add_argument('--verbose', help='Prints script debug messages', action='store_true', default=False)
     parser.add_argument('programcommand', nargs='*', help='The program to run')
     args = parser.parse_args(argv[1:])
@@ -77,10 +77,14 @@ def main(argv=None):
         optionsUsePreloadLibrary = True
         
     # ..............................................
-    # check for missing arguments
+    # check for missing arguments and prepare variables
     if len(args.programcommand) == 0:
         print('Please specify program to run')
         printUsage()
+    if (args.working_dir == ''):
+        scriptWorkingDir = os.getcwd()
+    else:
+        scriptWorkingDir = args.working_dir
     
     # ..........................................................
     # debug: print parsed arguments
@@ -96,7 +100,7 @@ def main(argv=None):
     # ..............................................................
     # get initial directory structure
     initialDirectoriesList = []
-    for walkroot, walkdirs, walkfiles in os.walk(args.working_dir):
+    for walkroot, walkdirs, walkfiles in os.walk(scriptWorkingDir):
         for dirnames in walkdirs:
             initialDirectoriesList.append(dirnames)
     
@@ -123,7 +127,7 @@ def main(argv=None):
     # get final directory structure and make difference
     finalDirectoriesList = []
     gvkiDirectoriesList = []
-    for walkroot, walkdirs, walkfiles in os.walk(args.working_dir):
+    for walkroot, walkdirs, walkfiles in os.walk(scriptWorkingDir):
         for dirnames in walkdirs:
             finalDirectoriesList.append(dirnames)
     for dirname in initialDirectoriesList:
@@ -139,9 +143,10 @@ def main(argv=None):
     
     # .............................................................
     # run preprocessor
+
     if (args.preprocess):
         for gvkiDirName in gvkiDirectoriesList:
-            kernel_preprocess.main(['preprocess', '--dir', args.working_dir + '/' + gvkiDirName, '--preprocessor', args.preprocessor])
+            kernel_preprocess.main(['preprocess', '--dir', scriptWorkingDir + '/' + gvkiDirName, '--preprocessor', args.preprocessor])
     
 # ===========================================
 # call main if executed as script

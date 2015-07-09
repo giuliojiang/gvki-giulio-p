@@ -45,7 +45,7 @@ def main(argv=None):
     args = parser.parse_args(argv[1:])
     gvkiFolderPath = args.dir
     cPreProcessorExecutable = args.preprocessor
-    logJsonFile = open(gvkiFolderPath + '/log.json', 'r')
+    logJsonFile = open(gvkiFolderPath + os.sep + 'log.json', 'r')
 
     # ...........................................
     # dictionary to store kernels to process
@@ -73,11 +73,11 @@ def main(argv=None):
         cppArguments = filterCppArguments(cppArguments)
 
         # construct call command
-        callCommandList = [cPreProcessorExecutable] + [gvkiFolderPath + '/' + dictionaryEntryKey] + cppArguments
+        callCommandList = [cPreProcessorExecutable] + [gvkiFolderPath + os.sep + dictionaryEntryKey] + cppArguments
 
         # open output stdout file
         preKernelFileName = dictionaryEntryKey.rsplit('.',1)[0] + '.pre.' + dictionaryEntryKey.rsplit('.',1)[1]
-        processedKernelFile = open(gvkiFolderPath + '/' + preKernelFileName, 'w')
+        processedKernelFile = open(gvkiFolderPath + os.sep + preKernelFileName, 'w')
 
         # call subprocess
         print(callCommandList)

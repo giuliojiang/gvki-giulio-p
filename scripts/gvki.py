@@ -110,7 +110,7 @@ def main(argv=None):
     # ..........................................................................
     # Initialize Errors log
     numberGvkiErrors = 0
-    gvkiErrorsLog = open(os.path.join(scriptWorkingDir, 'gvkiErrorsLog.txt'), 'w')
+    gvkiErrorsLog = open(os.path.join(scriptWorkingDir, 'gvkiErrorsLog.txt'), 'a')
     
     # ..........................................................
     # debug: print parsed arguments
@@ -171,7 +171,7 @@ def main(argv=None):
     if args.verbose:
         print(gvkiDirectoriesList)
     if (len(gvkiDirectoriesList) == 0):
-        print(colores.red() + "\nNo gvki folders generated. Did you recompile with the gvki folder or did you run using the gvki preload library?\n" + colors.end())
+        print(colors.red() + "\nNo gvki folders generated. Did you recompile with the gvki folder or did you run using the gvki preload library?\n" + colors.end())
     
     # .............................................................
     # run preprocessor
